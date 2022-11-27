@@ -43,6 +43,13 @@ One advantage of using Docker to setup the root file system is the ability to it
 
 Here are a few commands you can use to work locally and make sure everything installs before you push your changes to CI.
 
+### Set Environment Variables
+```
+export JETSON_ROOTFS_DIR=/tmp/jetson-builder/rootfs
+export JETSON_BUILD_DIR=/tmp/jetson-builder/build
+export JETSON_NANO_BOARD=jetson-nano
+```
+
 ### Build the rootfs image
 
 ```
