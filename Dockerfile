@@ -13,6 +13,8 @@ RUN apt install -y parted
 
 # ifconfig
 RUN apt install -y net-tools
+RUN apt install -y network-manager
+RUN apt install -y iputils-ping
 
 # needed by knod-static-nodes to create a list of static device nodes
 RUN apt install -y kmod
@@ -52,15 +54,15 @@ RUN apt install -y -o Dpkg::Options::="--force-overwrite" \
 
 RUN rm -rf /opt/nvidia/l4t-packages
 
-RUN apt install -y network-manager
-
-RUN apt install -y iputils-ping
-
 RUN apt install -y nano
 
 RUN apt install -y curl
 
 COPY root/ /
+
+RUN useradd -ms /bin/bash jetson
+RUN echo 'jetson:jetson' | chpasswd
+RUN usermod -a -G sudo jetson
 
 # ROS2 Foxy Installation
 RUN apt install -y locales
@@ -85,7 +87,25 @@ RUN apt install -y ros-foxy-ros-base python3-argcomplete
 
 RUN apt install -y ros-dev-tools
 
-RUN useradd -ms /bin/bash jetson
-RUN echo 'jetson:jetson' | chpasswd
+RUN rosdep init && rosdep update
 
-RUN usermod -a -G sudo jetson
+# Duckietown
+
+RUN apt install -y v4l-utils
+
+WORKDIR /home/jetson/dt_ws
+
+RUN mkdir -p src
+
+RUN wget https://raw.githubusercontent.com/nicholas-gs/duckietown_ros2_cps/main/main.repos
+
+RUN vcs import src < main.repos
+
+RUN chown -R jetson:jetson /home/jetson/dt_ws && chmod -R 775 /home/jetson/dt_ws
+
+RUN apt install -y python3-pip
+
+RUN rosdep install --from-paths src --ignore-src --rosdistro foxy -y
+
+RUN . /opt/ros/foxy/setup.sh && \
+    colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release --executor sequential
