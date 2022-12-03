@@ -5,16 +5,20 @@ RUN apt install -y ca-certificates
 
 RUN apt install -y sudo
 RUN apt install -y ssh
+RUN apt install -y sshfs
 RUN apt install -y netplan.io
 
 # resizerootfs
 RUN apt install -y udev
 RUN apt install -y parted
 
-# ifconfig
+# networking
 RUN apt install -y net-tools
 RUN apt install -y network-manager
 RUN apt install -y iputils-ping
+
+# i2c
+RUN apt install -y i2c-tools
 
 # needed by knod-static-nodes to create a list of static device nodes
 RUN apt install -y kmod
@@ -58,54 +62,34 @@ RUN apt install -y nano
 
 RUN apt install -y curl
 
+RUN apt install -y python3-pip
+
+RUN apt install -y libopencv-dev python3-opencv
+
 COPY root/ /
 
 RUN useradd -ms /bin/bash jetson
 RUN echo 'jetson:jetson' | chpasswd
 RUN usermod -a -G sudo jetson
 
-# ROS2 Foxy Installation
-RUN apt install -y locales
+COPY duckietown/ /home/jetson/duckietown/
 
-RUN locale-gen en_US en_US.UTF-8
+RUN chown -R jetson:jetson /home/jetson/duckietown && chmod -R 775 /home/jetson/duckietown
 
-RUN update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
+# usb permissions
+RUN usermod -aG dialout jetson
 
-RUN export LANG=en_US.UTF-8
+# i2c permissions
+RUN usermod -aG i2c jetson
 
-RUN apt install -y software-properties-common
+# gpio permissions
+RUN groupadd -f -r gpio
+RUN usermod -a -G gpio jetson
 
-RUN add-apt-repository universe
-
-RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
-
-RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
-
-RUN apt update
-
-RUN apt install -y ros-foxy-ros-base python3-argcomplete
-
-RUN apt install -y ros-dev-tools
-
-RUN rosdep init && rosdep update
-
-# Duckietown
-
-RUN apt install -y v4l-utils
-
-WORKDIR /home/jetson/dt_ws
-
-RUN mkdir -p src
-
-RUN wget https://raw.githubusercontent.com/nicholas-gs/duckietown_ros2_cps/main/main.repos
-
-RUN vcs import src < main.repos
-
-RUN chown -R jetson:jetson /home/jetson/dt_ws && chmod -R 775 /home/jetson/dt_ws
-
-RUN apt install -y python3-pip
-
-RUN rosdep install --from-paths src --ignore-src --rosdistro foxy -y
-
-RUN . /opt/ros/foxy/setup.sh && \
-    colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release --executor sequential
+RUN echo "export ROBOT_CONFIGURATION=\"\$(cat /home/jetson/duckietown/config/robot_configuration)\"" >> /home/jetson/.bashrc && \
+    echo "export ROBOT_HARDWARE=\"\$(cat /home/jetson/duckietown/config/robot_hardware)\"" >> /home/jetson/.bashrc && \
+    echo "export ROBOT_TYPE=\"\$(cat /home/jetson/duckietown/config/robot_type)\"" >> /home/jetson/.bashrc && \
+    echo "export ROBOT_NAME=\"\$(cat /home/jetson/duckietown/config/robot_name)\"" >> /home/jetson/.bashrc && \
+    echo "export ROBOT_CALIBRATION_DIR=/home/jetson/duckietown/config/calibrations" >> /home/jetson/.bashrc && \
+    echo "export HUT_MCU_ENABLE_PIN=5" >> /home/jetson/.bashrc && \
+    echo "/usr/bin/python3 /home/jetson/duckietown/autoboot/enable_mcu.py" >> /home/jetson/.bashrc
