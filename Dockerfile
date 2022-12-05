@@ -92,4 +92,5 @@ RUN echo "export ROBOT_CONFIGURATION=\"\$(cat /home/jetson/duckietown/config/rob
     echo "export ROBOT_NAME=\"\$(cat /home/jetson/duckietown/config/robot_name)\"" >> /home/jetson/.bashrc && \
     echo "export ROBOT_CALIBRATION_DIR=/home/jetson/duckietown/config/calibrations" >> /home/jetson/.bashrc && \
     echo "export HUT_MCU_ENABLE_PIN=5" >> /home/jetson/.bashrc && \
-    echo "/usr/bin/python3 /home/jetson/duckietown/autoboot/enable_mcu.py" >> /home/jetson/.bashrc
+    echo "/usr/bin/python3 /home/jetson/duckietown/autoboot/enable_mcu.py" >> /home/jetson/.bashrc && \
+    echo "export LD_LIBRARY_PATH=\"\$LD_LIBRARY_PATH:/usr/lib/aarch64-linux-gnu/tegra\"" >> /home/jetson/.bashrc

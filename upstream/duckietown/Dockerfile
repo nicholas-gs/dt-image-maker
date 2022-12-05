@@ -4,7 +4,13 @@ FROM nicholasgs/dt-cps:jetson-foxy as base
 
 RUN apt update
 
+# handling media devices.
 RUN apt install -y v4l-utils
+
+# process and system monitoring
+RUN pip3 install psutil
+
+USER jetson:jetson
 
 WORKDIR /home/jetson/dt_ws
 
@@ -14,11 +20,14 @@ RUN wget https://raw.githubusercontent.com/nicholas-gs/duckietown_ros2_cps/main/
 
 RUN vcs import src < main.repos
 
-RUN chown -R jetson:jetson /home/jetson/dt_ws && chmod -R 644 /home/jetson/dt_ws
+USER root:root
 
 RUN rosdep install --from-paths src --ignore-src --rosdistro foxy -y
 
+USER jetson:jetson
+
 RUN . /opt/ros/foxy/setup.sh && \
-    colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release --executor sequential
+    colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release --executor sequential \
+    --parallel-workers 2
 
 RUN echo "source /home/jetson/dt_ws/install/setup.bash" >> /home/jetson/.bashrc
