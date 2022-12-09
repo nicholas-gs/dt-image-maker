@@ -2,6 +2,14 @@
 
 > **tl;dr;** Build sd-card flashable ROS2 and Duckietown images for [Jetson Nano](https://developer.nvidia.com/embedded/jetson-nano-developer-kit) dev kits using Docker. Extended from this great [repository](https://github.com/defunctzombie/jetson-nano-image-maker).
 
+>**Warning** Image works as long as you don't need gstreamer related stuff. It seems that gstreamer pipeline require X server??? I keep getting
+```bash
+nvbuf_utils: Could not get EGL display connection
+nvbuf_utils: ERROR getting proc addr of eglCreateImageKHR
+nvbuf_utils: ERROR getting proc addr of eglDestroyImageKHR
+```
+> There are also a few missing gstreamer plugins that I can't find. Efforts to install a desktop environment fail as well. #shrug
+
 ## Images
 
 1. Base Image - Prepare a base image with necessary files and setup.

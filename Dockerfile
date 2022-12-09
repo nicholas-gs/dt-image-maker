@@ -17,6 +17,8 @@ RUN apt install -y net-tools
 RUN apt install -y network-manager
 RUN apt install -y iputils-ping
 
+RUN apt install -y htop
+
 # i2c
 RUN apt install -y i2c-tools
 
@@ -53,10 +55,39 @@ RUN apt install -y -o Dpkg::Options::="--force-overwrite" \
     nvidia-l4t-kernel-dtbs \
     nvidia-l4t-kernel-headers \
     nvidia-l4t-cuda \
+    nvidia-l4t-gstreamer \
+    nvidia-l4t-jetson-multimedia-api \
+    v4l-utils \
     jetson-gpio-common \
     python3-jetson-gpio
 
 RUN rm -rf /opt/nvidia/l4t-packages
+
+# https://docs.nvidia.com/metropolis/deepstream/dev-guide/text/DS_Quickstart.html
+RUN apt install -y -o Dpkg::Options::="--force-overwrite" \
+    libssl1.1 \
+    libgstreamer1.0-0 \
+    libgstrtspserver-1.0-0 \
+    libjansson4 \
+    libyaml-cpp-dev
+
+RUN apt install -y -o Dpkg::Options::="--force-overwrite" \
+    gstreamer1.0-tools gstreamer1.0-alsa \
+    gstreamer1.0-plugins-base gstreamer1.0-plugins-good \
+    gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly \
+    gstreamer1.0-libav
+
+RUN apt install -y -o Dpkg::Options::="--force-overwrite" \
+    libgstreamer1.0-dev \
+    libgstreamer-plugins-base1.0-dev \
+    libgstreamer-plugins-good1.0-dev \
+    libgstreamer-plugins-bad1.0-dev
+
+# Install desktop environment (not working atm)
+# RUN DEBIAN_FRONTEND=noninteractive apt install -y xorg
+# RUN DEBIAN_FRONTEND=noninteractive apt install -y lightdm-gtk-greeter \
+#     lightdm \
+#     openbox
 
 RUN apt install -y nano
 
@@ -85,6 +116,10 @@ RUN usermod -aG i2c jetson
 # gpio permissions
 RUN groupadd -f -r gpio
 RUN usermod -a -G gpio jetson
+
+# video permissions
+RUN groupadd -f -r video
+RUN usermod -a -G video jetson
 
 RUN echo "export ROBOT_CONFIGURATION=\"\$(cat /home/jetson/duckietown/config/robot_configuration)\"" >> /home/jetson/.bashrc && \
     echo "export ROBOT_HARDWARE=\"\$(cat /home/jetson/duckietown/config/robot_hardware)\"" >> /home/jetson/.bashrc && \
