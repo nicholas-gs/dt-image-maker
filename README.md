@@ -2,7 +2,7 @@
 
 ## Base Image
 
-Follow the guide [here](https://developer.nvidia.com/embedded/learn/get-started-jetson-nano-devkit#write-linux) and flash an SD card Jetson Nano Developer Kit SD Card Image. Tested on [JetPack 4.6.1 (L4T 32.7.1)](https://developer.nvidia.com/embedded/jetpack-sdk-461).
+Follow the guide [here](https://developer.nvidia.com/embedded/learn/get-started-jetson-nano-devkit#write-linux) and flash an SD card Jetson Nano Developer Kit SD Card Image. Tested on [JetPack 4.6.1 (L4T 32.7.1)](https://developer.nvidia.com/embedded/jetpack-sdk-461) and [JetPack 4.5 (L4T 32.5)](https://developer.nvidia.com/embedded/jetpack-sdk-45-archive)
 
 ## Predependencies
 
