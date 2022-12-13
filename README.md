@@ -130,6 +130,8 @@ sudo apt install --no-install-recommends -y \
 # install Cyclone DDS dependencies
 sudo apt install --no-install-recommends -y \
   libcunit1-dev
+# install vision_opencv dependencies
+sudo apt install libboost-python-dev -y
 
 sudo rm -rf /var/lib/apt/lists/*
 ```
@@ -158,7 +160,7 @@ mkdir -p ~/ros2_build_root/src
 cd ~/ros2_build_root
 
 # Download all the necessary repositories
-sudo sh -c "rosinstall_generator --deps --rosdistro foxy ros_base launch_xml launch_yaml example_interfaces > ros2.foxy.ros_base.rosinstall && \
+sudo sh -c "rosinstall_generator --deps --rosdistro foxy ros_base launch_xml launch_yaml vision_opencv example_interfaces > ros2.foxy.ros_base.rosinstall && \
 cat ros2.foxy.ros_base.rosinstall && \
     vcs import src < ros2.foxy.ros_base.rosinstall"
 ```
