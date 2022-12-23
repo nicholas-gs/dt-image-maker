@@ -160,7 +160,7 @@ mkdir -p ~/ros2_build_root/src
 cd ~/ros2_build_root
 
 # Download all the necessary repositories
-sudo sh -c "rosinstall_generator --deps --rosdistro foxy ros_base launch_xml launch_yaml vision_opencv example_interfaces > ros2.foxy.ros_base.rosinstall && \
+sudo sh -c "rosinstall_generator --deps --rosdistro foxy ros_base launch_xml launch_yaml example_interfaces > ros2.foxy.ros_base.rosinstall && \
 cat ros2.foxy.ros_base.rosinstall && \
     vcs import src < ros2.foxy.ros_base.rosinstall"
 ```
@@ -173,6 +173,10 @@ sudo sh -c "git clone --branch ros2 https://github.com/Kukanani/vision_msgs src/
     cp -r demos/demo_nodes_cpp src/ && \
     cp -r demos/demo_nodes_py src/ && \
     rm -r -f demos"
+
+# download vision_opencv packages
+cd ~/ros2_build_root/src
+sudo sh -c "git clone https://github.com/ros-perception/vision_opencv.git -b foxy"
 ```
 
 ### Install dependencies using rosdep
