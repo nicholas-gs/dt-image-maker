@@ -166,10 +166,14 @@ cat ros2.foxy.ros_base.rosinstall && \
 ```
 
 ```bash
-cd ~/ros2_build_root
 # download unreleased packages
-sudo sh -c "git clone --branch ros2 https://github.com/Kukanani/vision_msgs src/vision_msgs && \
-    git clone --branch foxy https://github.com/ros2/demos demos && \
+
+cd ~/ros2_build_root
+# Clone specific commit
+sudo sh -c "git clone --branch ros2 https://github.com/Kukanani/vision_msgs src/vision_msgs && cd src/vision_msgs && git reset --hard ad6e80ee7bb2eb1d5d687568f71abece7c0b6941"
+
+cd ~/ros_build_root
+sudo sh -c "git clone --branch foxy https://github.com/ros2/demos demos && \
     cp -r demos/demo_nodes_cpp src/ && \
     cp -r demos/demo_nodes_py src/ && \
     rm -r -f demos"
